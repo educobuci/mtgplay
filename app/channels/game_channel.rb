@@ -15,10 +15,9 @@ class GameChannel < ApplicationCable::Channel
   end
   
   def action(data)
-    args = data['args'] ? [@index, data['args']].flatten : @index
-    puts "ARGS: " + args.to_s
-    puts (game.send data['method'], *args)
+    game.action uuid, data
   end
+  
   def game
     GameServer.instance
   end
@@ -49,10 +48,21 @@ class GameServer
       ActionCable.server.broadcast "player_#{p.id}", game_start: p.id, hand: p.hand.to_json
     end
   end
-  def update(status, value)
-    puts "UPDATE: #{status} - #{value}"
+  def update(state, *args)
+    @state = state
+    @value = args.size == 1 ? args[0] : args
     @players.each do |p|
-      ActionCable.server.broadcast "player_#{p.id}", status => value
+      ActionCable.server.broadcast "player_#{p.id}", @state => @value
+    end
+  end
+  def action(uuid, data)
+    index = @players.index {|p| p.id == uuid}
+    if index
+      args = data['args'] ? [index, data['args']].flatten : index
+      puts "ARGS: " + args.to_s
+      puts (@game.send data['method'], *args)
+    else
+      raise "Unable to find player uuid: #{uuid}"
     end
   end
   
@@ -66,7 +76,7 @@ class GameServer
       @@seeks = uuid
     end
   end
-  def instance
+  def self.instance
     @@instance
   end
 end

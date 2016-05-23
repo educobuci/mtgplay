@@ -12,7 +12,7 @@ App.game = App.cable.subscriptions.create("GameChannel", {
   speak: function(message){
     return this.perform('speak', { message: message });
   },
-  move: function(method, args) {
-    return this.perform('move', { method: method, args: args })
+  action: function(method, args) {
+    return this.perform('action', { method: method, args: args })
   }
 });
