@@ -12,6 +12,7 @@ $(function(){
       onData: function(data){
         var state = Object.keys(data)[0];
         var value = data[state];
+        console.log(data);
         for(m in this) {
           if (m == state) {
             this[state](value);
@@ -24,13 +25,17 @@ $(function(){
         console.log(this.index);
       },
       dices: function(value){
-        if(value[this.index] > value[this.opponent]) {
-          this.showDialog("Want to start?", ['Yes', 'No'], function(){
-            alert($(this).text());
-          })
+        if(value[this.index] > value[this.opponent]){
+          this.showDialog("Want to start?", ['Yes', 'No'], function(e){
+            start = $(e.target).text() == 'Yes' ? this.index : this.opponent;
+            App.game.action("start_player", start);
+          }.bind(this));
         } else {
-          this.showDialog("Waiting opponent decide")
+          this.showDialog("Waiting opponent decide");
         }
+      },
+      start_player: function(){
+        
       }
     }
   );

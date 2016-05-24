@@ -45,18 +45,23 @@ class GameServer
   end
   def start
     @game.roll_dices
-    @game.start_player @game.die_winner, @game.die_winner
-    @game.draw_hands
-    @game.keep @game.die_winner
-    die_loser = @game.die_winner == 0 ? 1 : 0
-    @game.keep die_loser
-    @game.start
+    # @game.start_player @game.die_winner, @game.die_winner
+    # @game.draw_hands
+    # @game.keep @game.die_winner
+    # die_loser = @game.die_winner == 0 ? 1 : 0
+    # @game.keep die_loser
+    # @game.start
   end
   def update(state, *args)
     @state = state
     @value = args.size == 1 ? args[0] : args
     @players.each do |p|
       ActionCable.server.broadcast "player_#{p.id}", @state => @value
+    end
+    case @state
+    when :start_player
+      @game.draw_hands
+      ActionCable.server.broadcast "player_#{@players[@value].id}", hand: @players[@value].hand
     end
   end
   def action(uuid, data)
