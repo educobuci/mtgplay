@@ -1,3 +1,10 @@
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <title>MTG Sim</title>
+  <link rel="stylesheet" href="/assets/application.css" type="text/css" media="screen" charset="utf-8">
+</head>
+<body>
 <script type="text/x-handlebars" data-template-name="cards">
   {{#each cards}}
   <div {{action onCardClick}} {{bindAttr data-number="number"}} {{bindAttr data-name="name"}} {{bindAttr class=":card tapped:tapped"}}>
@@ -5,12 +12,12 @@
   </div>
   {{/each}}
 </script>
-<script type="text/x-handlebars" id="dialog-template">
+<script type="text/x-handlebars" data-template-name="dialog">
   <div class="dialog_box">
     <p>{{text}}</p>
     <div class="buttons">
       {{#each buttons}}
-        <button>{{this}}</button>
+        <button {{action "onButtonClick" on="click"}}>{{this}}</button>
       {{/each}}
     </div>
   </div>
@@ -137,3 +144,5 @@
     });
   })
 </script>
+</body>
+</html>

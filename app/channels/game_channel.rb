@@ -3,7 +3,11 @@ require "mtgsim"
 class GameChannel < ApplicationCable::Channel
   def subscribed
     stream_from "player_#{uuid}"
-    GameServer.seek uuid
+    if GameServer.seek uuid
+      @index = 0
+    else
+      @index = 1
+    end
   end
 
   def unsubscribed
@@ -11,7 +15,7 @@ class GameChannel < ApplicationCable::Channel
   end
   
   def speak(data)
-    ActionCable.server.broadcast "player_#{uuid}", message: data['message']
+    ActionCable.server.broadcast "player_#{uuid}", message: data['message'], index: @index
   end
   
   def action(data)
@@ -35,6 +39,9 @@ class GameServer
     end
     @game = Game.new @players
     @game.add_observer self
+    @players.each_with_index do |p,i|
+      ActionCable.server.broadcast "player_#{p.id}", players: i
+    end
   end
   def start
     @game.roll_dices
@@ -44,9 +51,6 @@ class GameServer
     die_loser = @game.die_winner == 0 ? 1 : 0
     @game.keep die_loser
     @game.start
-    @players.each do |p|
-      ActionCable.server.broadcast "player_#{p.id}", game_start: p.id, hand: p.hand.to_json
-    end
   end
   def update(state, *args)
     @state = state
@@ -72,8 +76,10 @@ class GameServer
       @@instance = GameServer.new [@@seeks, uuid]
       @@seeks = nil
       @@instance.start
+      false
     else
       @@seeks = uuid
+      true
     end
   end
   def self.instance
