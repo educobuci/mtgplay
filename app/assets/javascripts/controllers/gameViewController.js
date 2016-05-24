@@ -34,8 +34,21 @@ $(function(){
           this.showDialog("Waiting opponent decide");
         }
       },
-      start_player: function(){
-        
+      start_player: function(player){
+        if (player !== this.index) {
+          this.showDialog("Opponent is deciding if muligan to 6");
+        }
+      },
+      hand: function(cards) {
+        console.dir(cards.map(function(c){ return c.name }));
+        this.showDialog("Want to mulligan to " + (cards.length - 1) + "?", ['Yes', 'No'], function(e){
+            var keep = $(e.target).text() != 'Yes';
+            if (keep) {
+              App.game.action("keep");
+            } else {
+              App.game.action("mulligan");
+            }
+          }.bind(this));
       }
     }
   );
