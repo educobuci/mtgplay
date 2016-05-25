@@ -30,8 +30,8 @@ end
 class GameServer
   @@seeks = nil
   @@instance = nil
-  
   def initialize(players)
+    @keep_count = 0
     @players = players.map do |id|
       player = Player.new
       player.id = id
@@ -46,11 +46,11 @@ class GameServer
   def start
     @game.roll_dices
     # @game.start_player @game.die_winner, @game.die_winner
-    # @game.draw_hands
-    # @game.keep @game.die_winner
-    # die_loser = @game.die_winner == 0 ? 1 : 0
-    # @game.keep die_loser
-    # @game.start
+#     @game.draw_hands
+#     @game.keep @game.die_winner
+#     die_loser = @game.die_winner == 0 ? 1 : 0
+#     @game.keep die_loser
+#     @game.start
   end
   def update(state, *args)
     @state = state
@@ -61,7 +61,12 @@ class GameServer
     case @state
     when :start_player
       @game.draw_hands
-      ActionCable.server.broadcast "player_#{@players[@value].id}", hand: @players[@value].hand
+      @players.each do |p|
+        ActionCable.server.broadcast "player_#{p.id}", hand: p.hand
+      end
+    when :mulligan
+      player = @players[@value[0]]
+      ActionCable.server.broadcast "player_#{player.id}", hand: player.hand
     end
   end
   def action(uuid, data)
@@ -70,6 +75,13 @@ class GameServer
       args = data['args'] ? [index, data['args']].flatten : index
       puts "ARGS: " + args.to_s
       puts (@game.send data['method'], *args)
+      if data['method'] == 'keep'
+        @keep_count = @keep_count + 1
+        if @keep_count == 2
+          p 'starttttttttttttttttt'
+          @game.start
+        end
+      end
     else
       raise "Unable to find player uuid: #{uuid}"
     end

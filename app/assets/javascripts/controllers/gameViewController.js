@@ -2,6 +2,10 @@ $(function(){
   App.GameViewController = Class.define(function(){
       this.game = App.gameBuilder.create(this);
       this.showDialog("Waiting for another player...");
+      this.keeped = false;
+      this.opponentKeeped = false;
+      this.mulled = false;
+      this.handCards = [];
     },
     {
       showDialog: function(text, buttons, callback){
@@ -14,8 +18,8 @@ $(function(){
         var value = data[state];
         console.log(data);
         for(m in this) {
-          if (m == state) {
-            this[state](value);
+          if (m === state) {
+            this[m](value);
           }
         }
       },
@@ -35,20 +39,48 @@ $(function(){
         }
       },
       start_player: function(player){
-        if (player !== this.index) {
-          this.showDialog("Opponent is deciding if muligan to 6");
+        this.start_player = player;
+        if (this.start_player !== this.index) {
+          this.showDialog("Waiting for the opponent.");
         }
       },
       hand: function(cards) {
         console.dir(cards.map(function(c){ return c.name }));
-        this.showDialog("Want to mulligan to " + (cards.length - 1) + "?", ['Yes', 'No'], function(e){
-            var keep = $(e.target).text() != 'Yes';
-            if (keep) {
-              App.game.action("keep");
-            } else {
-              App.game.action("mulligan");
-            }
+        this.handCards = cards;
+        
+        // This is just for very first hand and start the game
+        if (this.start_player == this.index && !this.mulled) {
+          this.handleMulligan(this.handCards.length - 1);
+        }
+      },
+      mulligan: function(data) {
+        player = data[0]
+        number = Math.max(6 - data[1],0)
+        if (player == this.opponent && !this.keeped) {
+          this.handleMulligan(this.handCards.length -1);
+        } else if (this.opponentKeeped) {
+          this.handleMulligan(number);
+        }
+      },
+      handleMulligan: function(number) {
+        var number = number;
+        this.showDialog("Want to mulligan to " + number + "?",
+          ['Mulligan', 'Keep'], function(e){
+            var value = $(e.target).text().toLowerCase();
+            App.game.action(value);
+            this.mulled = true;
+            this.showDialog("Waiting for the opponent.");
           }.bind(this));
+      },
+      keep: function(keeped) {
+        if (keeped == this.index) {
+          this.keeped = true;
+        } else {
+          this.opponentKeeped = true;
+          if (!this.keeped) {
+            this.handleMulligan(this.handCards.length -1);
+          }
+        }
       }
     }
   );
