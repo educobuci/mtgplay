@@ -6,6 +6,7 @@ $(function(){
       this.opponentKeeped = false;
       this.mulled = false;
       this.handCards = [];
+      this.current_player = null;
     },
     {
       showDialog: function(text, buttons, callback){
@@ -79,7 +80,22 @@ $(function(){
           this.opponentKeeped = true;
           if (!this.keeped) {
             this.handleMulligan(this.handCards.length -1);
+          } else {
+            this.current_player = this.start_player
           }
+        }
+      },
+      changed_phase: function(phase) {
+        switch (phase) {
+        case "first_main":
+          if (this.index == this.current_player) {
+            this.showDialog("Cast spells");
+          } else {
+            this.showDialog("Waiting for the opponent");
+          }
+          break;
+        default:
+          
         }
       }
     }
