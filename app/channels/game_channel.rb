@@ -73,12 +73,11 @@ class GameServer
     index = @players.index {|p| p.id == uuid}
     if index
       args = data['args'] ? [index, data['args']].flatten : index
-      puts "ARGS: " + args.to_s
+      puts "#{data['method']} ARGS: " + args.to_s
       puts (@game.send data['method'], *args)
       if data['method'] == 'keep'
         @keep_count = @keep_count + 1
         if @keep_count == 2
-          p 'starttttttttttttttttt'
           @game.start
         end
       end
