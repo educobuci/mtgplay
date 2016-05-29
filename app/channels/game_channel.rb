@@ -14,10 +14,6 @@ class GameChannel < ApplicationCable::Channel
     # Any cleanup needed when channel is unsubscribed
   end
   
-  def speak(data)
-    ActionCable.server.broadcast "player_#{uuid}", message: data['message'], index: @index
-  end
-  
   def action(data)
     game.action uuid, data
   end
@@ -39,34 +35,30 @@ class GameServer
     end
     @game = Game.new @players
     @game.add_observer self
+    @message_index = {}
     @players.each_with_index do |p,i|
-      ActionCable.server.broadcast "player_#{p.id}", players: i
+      @message_index[p.id] = -1
+      broadcast(p, players: i)
     end
   end
   def start
     @game.roll_dices
-    # @game.start_player @game.die_winner, @game.die_winner
-#     @game.draw_hands
-#     @game.keep @game.die_winner
-#     die_loser = @game.die_winner == 0 ? 1 : 0
-#     @game.keep die_loser
-#     @game.start
   end
   def update(state, *args)
     @state = state
     @value = args.size == 1 ? args[0] : args
     @players.each do |p|
-      ActionCable.server.broadcast "player_#{p.id}", @state => @value
+      broadcast(p, @state => @value)
     end
     case @state
     when :start_player
       @game.draw_hands
       @players.each do |p|
-        ActionCable.server.broadcast "player_#{p.id}", hand: p.hand
+        broadcast(p, hand: p.hand)
       end
     when :mulligan
       player = @players[@value[0]]
-      ActionCable.server.broadcast "player_#{player.id}", hand: player.hand
+      broadcast(player, hand: player.hand)
     end
   end
   def action(uuid, data)
@@ -84,6 +76,12 @@ class GameServer
     else
       raise "Unable to find player uuid: #{uuid}"
     end
+  end
+  def broadcast(player, data)
+    ActionCable.server.broadcast "player_#{player.id}", {
+      index: @message_index[player.id] += 1,
+      data: data
+    }      
   end
   
   # Class methods
