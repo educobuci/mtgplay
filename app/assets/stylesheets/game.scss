@@ -1,3 +1,7 @@
+$border-color: #786E50;
+$bar-width: 150px;
+$menu-text-color: #CBC3B9;
+
 * { box-sizing: border-box; padding: 0; margin: 0; }
 body { font-family:arial; color:white; background:black; width:100%; height:100%; text-align: center;  }
 #frame {
@@ -30,24 +34,29 @@ body { font-family:arial; color:white; background:black; width:100%; height:100%
 //*****************************************************
 #players_bar {
   height:100%;
-  width:10%;
+  width: $bar-width;
   float:left;
   overflow:hidden;
   min-height:600px;
-  > div {
-    border: solid 1px black;
-    background:gray;
-  }
   #phases {
-    height:40%;
+    color:$menu-text-color;
+    height:calc(40% - 10px);
     font-size:0.8em;
     text-align: left;
+    border:solid 1px $border-color;
+    border-radius: 5px;
+    margin:5px;
     ul {
       height:100%;
       li {
         height:10%;
-        border-top:solid 1px black;
-        border-bottom: solid 1px black;
+        display: flex;
+        padding-left: 10px;
+        align-items: center;
+        border-bottom: solid 1px $border-color;
+      }
+      :last-child {
+        border:2px;
       }
     }
   }
@@ -55,7 +64,12 @@ body { font-family:arial; color:white; background:black; width:100%; height:100%
     height:10%;
   }
   .player{
-    height:25%;
+    height: calc(25% - 10px);
+    border: solid 1px $border-color;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 5px;
+    font-size:smaller;
     > div{
       height:100%;
       width:50%;
@@ -95,8 +109,8 @@ body { font-family:arial; color:white; background:black; width:100%; height:100%
 //*****************************************************
 #boards {
   height:100%;
-  margin-left:200px;
-  margin-right:200px;
+  margin-left:$bar-width;
+  margin-right:$bar-width;
   min-height:600px;
   .wrapper {
     height:40%;
@@ -130,7 +144,7 @@ body { font-family:arial; color:white; background:black; width:100%; height:100%
   position:absolute;
   background:gray;
   height:100%;
-  width:10%;
+  width: $bar-width;
   right:0;
   top:0;
   overflow:hidden;
