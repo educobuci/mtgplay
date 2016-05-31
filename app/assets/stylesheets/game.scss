@@ -157,8 +157,12 @@ ul {
     overflow:hidden;
   }
   #hand {
-    padding:6px 10px;
-    height:20%;
+    padding: 6px 5px;
+    height: calc(20% - 15px);
+    background: #222;
+    border: solid 1px #555;
+    border-radius: 5px;
+    margin: 5px;
   }
 }
 
