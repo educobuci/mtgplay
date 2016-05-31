@@ -132,7 +132,7 @@ ul {
 #boards {
   height:100%;
   margin-left:$bar-width;
-  margin-right:$bar-width;
+  margin-right:0;
   min-height:600px;
   .wrapper {
     height:40%;
@@ -140,7 +140,10 @@ ul {
   }
  .board {
     height:100%;
-    background: darkgray;
+    height: 100%;
+    background: #2D2A25;
+    border: solid 1px #786E50;
+    border-radius:5px;
     .card {
       padding-right:4%;
     }
@@ -166,7 +169,7 @@ ul {
   position:absolute;
   background:gray;
   height:100%;
-  width: $bar-width;
+  width: 0;
   right:0;
   top:0;
   overflow:hidden;
