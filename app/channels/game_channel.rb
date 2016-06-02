@@ -38,7 +38,7 @@ class GameServer
     @message_index = {}
     @players.each_with_index do |p,i|
       @message_index[p.id] = -1
-      broadcast(p, players: i)
+      broadcast(p, start: { index: i, players: @players.map {|pl| player_state(pl) }})
     end
   end
   def start
@@ -81,7 +81,15 @@ class GameServer
     ActionCable.server.broadcast "player_#{player.id}", {
       index: @message_index[player.id] += 1,
       data: data
-    }      
+    }
+  end
+  def player_state(player)
+    {
+      life: player.life,
+      library: player.library.size,
+      board: player.board,
+      hand: player.hand.size
+    }
   end
   
   # Class methods

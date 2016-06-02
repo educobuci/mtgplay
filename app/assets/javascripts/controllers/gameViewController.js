@@ -24,10 +24,9 @@ $(function(){
           }
         }
       },
-      players: function(index){
-        this.index = index;
-        this.opponent = index == 0 ? 1 : 0;
-        console.log(this.index);
+      start: function(data){
+        this.index = data.index;
+        this.opponent = this.index == 0 ? 1 : 0;
       },
       dices: function(value){
         if(value[this.index] > value[this.opponent]){
