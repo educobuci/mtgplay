@@ -94,7 +94,6 @@ $(function(){
           }
           break;
         default:
-          
         }
       }
     }
