@@ -13,7 +13,7 @@
         this['set' + this._capitalize(name)] = function(value){
           var accessor = this.__accessor ? this.__accessor + "." + name : name;
           if (value instanceof Model) {
-            value.__accessor = name;
+            value.__accessor = accessor;
             value.addObserver(this);
           }
           this[FIELD_PREFIX + name] = value;

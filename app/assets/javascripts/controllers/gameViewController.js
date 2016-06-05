@@ -54,8 +54,8 @@ $(function(){
         var state = Object.keys(data)[0];
         var value = data[state];
         console.log(data);
-        for(m in this) {
-          if (m === state) {
+        for(m in this){
+          if (m === state){
             this[m](value);
           }
         }
