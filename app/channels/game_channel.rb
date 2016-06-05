@@ -38,7 +38,12 @@ class GameServer
     @message_index = {}
     @players.each_with_index do |p,i|
       @message_index[p.id] = -1
-      broadcast(p, start: { index: i, players: @players.map {|pl| player_state(pl) }})
+      players =  @players.map do |pl|
+        state = player_state(pl)
+        state[:hand] = pl == p ? pl.hand : pl.hand.size
+        state
+      end
+      broadcast(p, start: { index: i, players: players })
     end
   end
   def start
@@ -94,7 +99,7 @@ class GameServer
       life: player.life,
       library: player.library.size,
       board: player.board,
-      hand: player.hand.size
+      graveyard: player.graveyard
     }
   end
   
