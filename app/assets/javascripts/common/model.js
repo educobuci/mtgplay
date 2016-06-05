@@ -1,8 +1,12 @@
 (function(){
+  var FIELD_PREFIX = "_";
   window.Model || (window.Model = Class.extend(window.Observable,
-    function (){
+    function (object){
       Observable.call(this);
       this.__accessor = null;
+      for(name in object){
+        this[FIELD_PREFIX + name] = object[name];
+      }
     },
     {
       attrAccessor: function(name){
@@ -12,11 +16,11 @@
             value.__accessor = name;
             value.addObserver(this);
           }
-          this["_" + name] = value;
+          this[FIELD_PREFIX + name] = value;
           this.notifyObservers(accessor);
         }.bind(this);
         this['get' + this._capitalize(name)] = function(){
-          return this["_" + name];
+          return this[FIELD_PREFIX + name];
         }.bind(this);
       },
       _capitalize: function(string){

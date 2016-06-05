@@ -1,17 +1,28 @@
 $(function(){  
-  App.GameState = Class.extend(Model, function(){
-    Model.call(this);
+  App.GameState = Class.extend(Model, function(object){
     this.attrAccessor("player");
     this.attrAccessor("opponent");
+    Model.call(this, object);
   });
   
-  App.Player = Class.extend(Model, function(){
-    Model.call(this);
-    this.attrAccessor("hand", App.Player.prototype);
-    this.attrAccessor("board", App.Player.prototype);
-    this.attrAccessor("graveyard", App.Player.prototype);
-    this.attrAccessor("life", App.Player.prototype);
-  });
+  App.Player = Class.extend(Model,
+    function(object){
+      this.attrAccessor("hand", App.Player.prototype);
+      this.attrAccessor("board", App.Player.prototype);
+      this.attrAccessor("library", App.Player.prototype);
+      this.attrAccessor("graveyard", App.Player.prototype);
+      this.attrAccessor("life", App.Player.prototype);
+      Model.call(this, object);
+    },
+    {
+      getHandSize: function(){
+        if (this.getHand() instanceof Array ) {
+          return this.getHand().length;
+        }
+        return this.getHand();
+      }
+    }
+  );
   
   App.GameViewController = Class.define(function(){
       this.game = App.gameBuilder.create(this);
@@ -21,8 +32,18 @@ $(function(){
       this.mulled = false;
       this.handCards = [];
       this.current_player = null;
+      this.state = new App.GameState();
+      this.state.addObserver(this);
     },
     {
+      update: function(value){
+        if (value.indexOf("player") >= 0) {
+          $("#player_me").html(HandlebarsTemplates.player(this.state.getPlayer()));
+        }
+        if (value.indexOf("opponent") >= 0) {
+          $("#player_opponent").html(HandlebarsTemplates.player(this.state.getOpponent()));
+        }
+      },
       showDialog: function(text, buttons, callback){
         var template = Handlebars.compile($("#dialog-template").html());
         $("#dialog").html(template({text: text, buttons: buttons}));
@@ -41,8 +62,11 @@ $(function(){
       start: function(data){
         this.index = data.index;
         this.opponent = this.index == 0 ? 1 : 0;
-        $("#player_opponent").html(HandlebarsTemplates.player(data.players[this.opponent]));
-        $("#player_me").html(HandlebarsTemplates.player(data.players[this.index]));
+        var playerModel = new App.Player(data.players[this.index]);
+        var opponentModel = new App.Player(data.players[this.opponent]);
+        opponentModel.setHand(7);
+        this.state.setPlayer(playerModel);
+        this.state.setOpponent(opponentModel);
       },
       dices: function(value){
         if(value[this.index] > value[this.opponent]){
@@ -62,10 +86,9 @@ $(function(){
         this.current_player = this.start_player;
       },
       hand: function(cards) {
-        console.dir(cards.map(function(c){ return c.name }));
         this.handCards = cards;
+        this.state.getPlayer().setHand(this.handCards);
         $("#hand").html(HandlebarsTemplates.cards({cards: cards}));
-        
         // This is just for very first hand and start the game
         if (this.start_player == this.index && !this.mulled) {
           this.handleMulligan(this.handCards.length - 1);
@@ -78,6 +101,8 @@ $(function(){
           this.handleMulligan(this.handCards.length -1);
         } else if (this.opponentKeeped) {
           this.handleMulligan(number);
+        } else if (player == this.opponent) {
+          this.state.getOpponent().setHand(number + 1);
         }
       },
       handleMulligan: function(number) {
