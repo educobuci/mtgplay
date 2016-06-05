@@ -43,6 +43,12 @@ class GameServer
   end
   def start
     @game.roll_dices
+    @game.start_player @game.die_winner, @game.die_winner
+    @game.draw_hands
+    @game.keep @game.die_winner
+    die_loser = @game.die_winner == 0 ? 1 : 0
+    @game.keep die_loser
+    @game.start
   end
   def update(state, *args)
     @state = state

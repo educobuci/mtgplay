@@ -24,6 +24,21 @@ $(function(){
     }
   );
   
+  // App.View = Class.define(
+  //   function(container, template){
+  //     this.container = container;
+  //     this.template = HandlebarsTemplates[template];
+  //   },
+  //   {
+  //     setModel: function(model){
+  //       this.model = model;
+  //     },
+  //     render: function(model){
+  //       this.container.html(this.template(model));
+  //     }
+  //   }
+  // );
+  
   App.GameViewController = Class.define(function(){
       this.game = App.gameBuilder.create(this);
       this.showDialog("Waiting for another player...");
@@ -33,15 +48,18 @@ $(function(){
       this.current_player = null;
       this.state = new App.GameState();
       this.state.addObserver(this);
+      this.gameStarted = false;
     },
     {
       update: function(value){
         if (value.indexOf("player") >= 0) {
           $("#player_me").html(HandlebarsTemplates.player(this.state.getPlayer()));
           $("#hand").html(HandlebarsTemplates.cards({cards: this.state.getPlayer().getHand()}));
+          $("#player_board .lands").html(HandlebarsTemplates.cards({cards: this.state.getPlayer().getBoard()}));
         }
         if (value.indexOf("opponent") >= 0) {
           $("#player_opponent").html(HandlebarsTemplates.player(this.state.getOpponent()));
+          $("#opponent_board .lands").html(HandlebarsTemplates.cards({cards: this.state.getOpponent().getBoard()}));
         }
       },
       showDialog: function(text, buttons, callback){
@@ -127,6 +145,9 @@ $(function(){
       changed_phase: function(phase) {
         switch (phase) {
         case "first_main":
+          if (!this.gameStarted) {
+            this.bind();
+          }
           console.log(this.index, this.current_player)
           if (this.index == this.current_player) {
             this.showDialog("Cast spells");
@@ -137,6 +158,22 @@ $(function(){
         default:
           
         }
+      },
+      play_card: function(data){
+        var player = data[0];
+        var card = data[1];
+        var playerModel = player == this.index ? this.state.getPlayer() : this.state.getOpponent();
+        var board = playerModel.getBoard();
+        board.push(card);
+        playerModel.setBoard(board);
+      },
+      bind: function(){
+        $("#hand div.card").on("click", function(){
+          App.game.action("play_card", $(this).index());
+        });
+        $("#player_board").on("click", function(){
+          App.game.action("play_card", $(this).index());
+        });
       }
     }
   );
