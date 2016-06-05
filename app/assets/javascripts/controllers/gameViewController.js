@@ -101,7 +101,8 @@ $(function(){
           this.handleMulligan(this.handCards.length -1);
         } else if (this.opponentKeeped) {
           this.handleMulligan(number);
-        } else if (player == this.opponent) {
+        }
+        if (player == this.opponent) {
           this.state.getOpponent().setHand(number + 1);
         }
       },
