@@ -17,28 +17,7 @@
 </script>
 <div id="frame">
   <div id="players_bar">
-    <div class="player">
-      <div class="info">
-        <div class="avatar">
-          <img src="https://pbs.twimg.com/profile_images/727534591116976128/VOyi6H08_bigger.jpg" >
-        </div>
-        <ul class="cards">
-          <li class="lib">50</li>
-          <li class="hand">6</li>
-          <li class="grave">2</li>  
-        </ul>
-        <ul class="pool">
-          <li class="white"><i class="ms ms-w ms-cost"></i></li>
-          <li class="blue"><i class="ms ms-u ms-cost"></i></li>
-          <li class="black"><i class="ms ms-b ms-cost"></i></li>
-          <li class="red"><i class="ms ms-r ms-cost"></i></li>
-          <li class="green"><i class="ms ms-g ms-cost"></i></li>
-          <li class="colorless"><i class="ms ms-c ms-cost"></i></li>
-        </ul>
-      </div>
-      <div class="graveyard">
-      </div>
-    </div>
+    <div class="player" id="player_opponent"></div>
     <div id="phases">
       <ul>
         <li class="untap">Untap</li>
@@ -60,28 +39,7 @@
         <button type="submit" class="btn">Submit</button>
       </form>
     </div>
-    <div class="player">
-      <div class="info">
-        <div class="avatar">
-          <img src="https://pbs.twimg.com/profile_images/727534591116976128/VOyi6H08_bigger.jpg" >
-        </div>
-        <ul class="cards">
-          <li class="lib">50</li>
-          <li class="hand">6</li>
-          <li class="grave">2</li>  
-        </ul>
-        <ul class="pool">
-          <li class="white"><i class="ms ms-w ms-cost"></i></li>
-          <li class="blue"><i class="ms ms-u ms-cost"></i></li>
-          <li class="black"><i class="ms ms-b ms-cost"></i></li>
-          <li class="red"><i class="ms ms-r ms-cost"></i></li>
-          <li class="green"><i class="ms ms-g ms-cost"></i></li>
-          <li class="colorless"><i class="ms ms-c ms-cost"></i></li>
-        </ul>
-      </div>
-      <div class="graveyard">
-      </div>
-    </div>
+    <div class="player" id="player_me"></div>
   </div>
   <div id="boards">
     <div class="wrapper">
@@ -119,9 +77,6 @@
       </div>      
     </div>
     <div id="hand">
-      <div class="card">
-        <img src="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=253680&amp;type=card">
-      </div>
     </div>
   </div>
   <div id="chat_bar">

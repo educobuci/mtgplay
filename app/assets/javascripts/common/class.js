@@ -6,4 +6,9 @@
     }
     return klass;
   };
+  window.Class.extend = function(klass, constructor, methods) {
+    var extend = constructor;
+    extend.prototype = new klass();
+    return window.Class.define(extend, methods);
+  }
 })();

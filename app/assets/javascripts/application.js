@@ -13,4 +13,10 @@
 //= require handlebars
 //= require jquery
 //= require jquery_ujs
+  
+//= require common/class
+//= require common/observable
+//= require common/model
+  
+//= require_tree ./templates
 //= require_tree .

@@ -1,4 +1,18 @@
-$(function(){
+$(function(){  
+  App.GameState = Class.extend(Model, function(){
+    Model.call(this);
+    this.attrAccessor("player");
+    this.attrAccessor("opponent");
+  });
+  
+  App.Player = Class.extend(Model, function(){
+    Model.call(this);
+    this.attrAccessor("hand", App.Player.prototype);
+    this.attrAccessor("board", App.Player.prototype);
+    this.attrAccessor("graveyard", App.Player.prototype);
+    this.attrAccessor("life", App.Player.prototype);
+  });
+  
   App.GameViewController = Class.define(function(){
       this.game = App.gameBuilder.create(this);
       this.showDialog("Waiting for another player...");
@@ -27,6 +41,8 @@ $(function(){
       start: function(data){
         this.index = data.index;
         this.opponent = this.index == 0 ? 1 : 0;
+        $("#player_opponent").html(HandlebarsTemplates.player(data.players[this.opponent]));
+        $("#player_me").html(HandlebarsTemplates.player(data.players[this.index]));
       },
       dices: function(value){
         if(value[this.index] > value[this.opponent]){
@@ -43,10 +59,12 @@ $(function(){
         if (this.start_player !== this.index) {
           this.showDialog("Waiting for the opponent.");
         }
+        this.current_player = this.start_player;
       },
       hand: function(cards) {
         console.dir(cards.map(function(c){ return c.name }));
         this.handCards = cards;
+        $("#hand").html(HandlebarsTemplates.cards({cards: cards}));
         
         // This is just for very first hand and start the game
         if (this.start_player == this.index && !this.mulled) {
@@ -79,14 +97,13 @@ $(function(){
           this.opponentKeeped = true;
           if (!this.keeped) {
             this.handleMulligan(this.handCards.length -1);
-          } else {
-            this.current_player = this.start_player
           }
         }
       },
       changed_phase: function(phase) {
         switch (phase) {
         case "first_main":
+          console.log(this.index, this.current_player)
           if (this.index == this.current_player) {
             this.showDialog("Cast spells");
           } else {
