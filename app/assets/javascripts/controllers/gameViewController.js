@@ -30,7 +30,6 @@ $(function(){
       this.keeped = false;
       this.opponentKeeped = false;
       this.mulled = false;
-      this.handCards = [];
       this.current_player = null;
       this.state = new App.GameState();
       this.state.addObserver(this);
@@ -87,18 +86,17 @@ $(function(){
         this.current_player = this.start_player;
       },
       hand: function(cards) {
-        this.handCards = cards;
-        this.state.getPlayer().setHand(this.handCards);
+        this.state.getPlayer().setHand(cards);
         // This is just for very first hand and start the game
         if (this.start_player == this.index && !this.mulled) {
-          this.handleMulligan(this.handCards.length - 1);
+          this.handleMulligan(this.state.getPlayer().getHand().length - 1);
         }
       },
       mulligan: function(data) {
-        player = data[0]
-        number = Math.max(6 - data[1],0)
+        player = data[0];
+        number = Math.max(6 - data[1],0);
         if (player == this.opponent && !this.keeped) {
-          this.handleMulligan(this.handCards.length -1);
+          this.handleMulligan(this.state.getPlayer().getHand().length -1);
         } else if (this.opponentKeeped) {
           this.handleMulligan(number);
         }
@@ -122,7 +120,7 @@ $(function(){
         } else {
           this.opponentKeeped = true;
           if (!this.keeped) {
-            this.handleMulligan(this.handCards.length -1);
+            this.handleMulligan(this.state.getPlayer().getHand().length -1);
           }
         }
       },
