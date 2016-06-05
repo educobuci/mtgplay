@@ -7,11 +7,11 @@ $(function(){
   
   App.Player = Class.extend(Model,
     function(object){
-      this.attrAccessor("hand", App.Player.prototype);
-      this.attrAccessor("board", App.Player.prototype);
-      this.attrAccessor("library", App.Player.prototype);
-      this.attrAccessor("graveyard", App.Player.prototype);
-      this.attrAccessor("life", App.Player.prototype);
+      this.attrAccessor("hand");
+      this.attrAccessor("board");
+      this.attrAccessor("library");
+      this.attrAccessor("graveyard");
+      this.attrAccessor("life");
       Model.call(this, object);
     },
     {
@@ -39,6 +39,7 @@ $(function(){
       update: function(value){
         if (value.indexOf("player") >= 0) {
           $("#player_me").html(HandlebarsTemplates.player(this.state.getPlayer()));
+          $("#hand").html(HandlebarsTemplates.cards({cards: this.state.getPlayer().getHand()}));
         }
         if (value.indexOf("opponent") >= 0) {
           $("#player_opponent").html(HandlebarsTemplates.player(this.state.getOpponent()));
@@ -88,7 +89,6 @@ $(function(){
       hand: function(cards) {
         this.handCards = cards;
         this.state.getPlayer().setHand(this.handCards);
-        $("#hand").html(HandlebarsTemplates.cards({cards: cards}));
         // This is just for very first hand and start the game
         if (this.start_player == this.index && !this.mulled) {
           this.handleMulligan(this.handCards.length - 1);
