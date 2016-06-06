@@ -153,7 +153,7 @@ $(function(){
             this.showDialog("Waiting for the opponent");
           }
           if (!this.gameStarted) {
-            this.gameStated = true;
+            this.gameStarted = true;
             this.bindEvents();
           }
           break;
@@ -166,7 +166,7 @@ $(function(){
           App.game.action("play_card", $(this).index());
         });
         $("#player_board").on("click", 'div.card', function(){
-          App.game.action("tap_card", $(this).index());
+          App.game.action("tap_card", $(this).data("index"));
         });
       },
       game_state: function(state){
@@ -174,21 +174,24 @@ $(function(){
         var opponentState = state.players[this.opponent];
         var filterLands = function(c){ return c.types.indexOf("land") >= 0; };
         var filterNonLands = function(c){ return c.types.indexOf("land") < 0; };
-        
+        var map = function(c,i){
+          c.index = i;
+          return c;
+        };
         $("#player_me").html(HandlebarsTemplates.player(playerState));
         $("#hand").html(HandlebarsTemplates.cards({cards: playerState.hand}));
         $("#player_board .lands").html(HandlebarsTemplates.cards({
-          cards: playerState.board.filter(filterLands)
+          cards: playerState.board.map(map).filter(filterLands)
         }));
         $("#player_board .creatures").html(HandlebarsTemplates.cards({
-          cards: playerState.board.filter(filterNonLands)
+          cards: playerState.board.map(map).filter(filterNonLands)
         }));
         $("#player_opponent").html(HandlebarsTemplates.player(opponentState));
         $("#opponent_board .lands").html(HandlebarsTemplates.cards({
-          cards: opponentState.board.filter(filterLands)
+          cards: opponentState.board.map(map).filter(filterLands)
         }));
         $("#opponent_board .creatures").html(HandlebarsTemplates.cards({
-          cards: opponentState.board.filter(filterNonLands)
+          cards: opponentState.board.map(map).filter(filterNonLands)
         }));
       }
     }
