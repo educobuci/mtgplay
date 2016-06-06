@@ -52,14 +52,16 @@ $(function(){
     },
     {
       update: function(value){
-        if (value.indexOf("player") >= 0) {
-          $("#player_me").html(HandlebarsTemplates.player(this.state.getPlayer()));
-          $("#hand").html(HandlebarsTemplates.cards({cards: this.state.getPlayer().getHand()}));
-          $("#player_board .lands").html(HandlebarsTemplates.cards({cards: this.state.getPlayer().getBoard()}));
-        }
-        if (value.indexOf("opponent") >= 0) {
-          $("#player_opponent").html(HandlebarsTemplates.player(this.state.getOpponent()));
-          $("#opponent_board .lands").html(HandlebarsTemplates.cards({cards: this.state.getOpponent().getBoard()}));
+        if (!this.gameStarted) {
+          if (value.indexOf("player") >= 0) {
+            $("#player_me").html(HandlebarsTemplates.player(this.state.getPlayer()));
+            $("#hand").html(HandlebarsTemplates.cards({cards: this.state.getPlayer().getHand()}));
+            $("#player_board .lands").html(HandlebarsTemplates.cards({cards: this.state.getPlayer().getBoard()}));
+          }
+          if (value.indexOf("opponent") >= 0) {
+            $("#player_opponent").html(HandlebarsTemplates.player(this.state.getOpponent()));
+            $("#opponent_board .lands").html(HandlebarsTemplates.cards({cards: this.state.getOpponent().getBoard()}));
+          }
         }
       },
       showDialog: function(text, buttons, callback){
@@ -145,35 +147,49 @@ $(function(){
       changed_phase: function(phase) {
         switch (phase) {
         case "first_main":
-          if (!this.gameStarted) {
-            this.bind();
-          }
-          console.log(this.index, this.current_player)
           if (this.index == this.current_player) {
             this.showDialog("Cast spells");
           } else {
             this.showDialog("Waiting for the opponent");
+          }
+          if (!this.gameStarted) {
+            this.gameStated = true;
+            this.bindEvents();
           }
           break;
         default:
           
         }
       },
-      play_card: function(data){
-        var player = data[0];
-        var card = data[1];
-        var playerModel = player == this.index ? this.state.getPlayer() : this.state.getOpponent();
-        var board = playerModel.getBoard();
-        board.push(card);
-        playerModel.setBoard(board);
+      bindEvents: function(){
+        $("#hand").on('click', 'div.card', function(){
+          App.game.action("play_card", $(this).index());
+        });
+        $("#player_board").on("click", 'div.card', function(){
+          App.game.action("tap_card", $(this).index());
+        });
       },
-      bind: function(){
-        $("#hand div.card").on("click", function(){
-          App.game.action("play_card", $(this).index());
-        });
-        $("#player_board").on("click", function(){
-          App.game.action("play_card", $(this).index());
-        });
+      game_state: function(state){
+        var playerState = state.players[this.index];
+        var opponentState = state.players[this.opponent];
+        var filterLands = function(c){ return c.types.indexOf("land") >= 0; };
+        var filterNonLands = function(c){ return c.types.indexOf("land") < 0; };
+        
+        $("#player_me").html(HandlebarsTemplates.player(playerState));
+        $("#hand").html(HandlebarsTemplates.cards({cards: playerState.hand}));
+        $("#player_board .lands").html(HandlebarsTemplates.cards({
+          cards: playerState.board.filter(filterLands)
+        }));
+        $("#player_board .creatures").html(HandlebarsTemplates.cards({
+          cards: playerState.board.filter(filterNonLands)
+        }));
+        $("#player_opponent").html(HandlebarsTemplates.player(opponentState));
+        $("#opponent_board .lands").html(HandlebarsTemplates.cards({
+          cards: opponentState.board.filter(filterLands)
+        }));
+        $("#opponent_board .creatures").html(HandlebarsTemplates.cards({
+          cards: opponentState.board.filter(filterNonLands)
+        }));
       }
     }
   );

@@ -1,5 +1,5 @@
 {{#each cards}}
-<div data-number="{{number}}" data-name="{{name}}" class="card">
+<div data-number="{{number}}" data-name="{{name}}" class="card {{#if tapped}}tapped{{/if}}">
   <img src="{{image}}">
 </div>
 {{/each}}
