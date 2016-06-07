@@ -103,7 +103,10 @@ class GameServer
         state[:hand] = pl == p ? pl.hand : pl.hand.size
         state
       end
-      broadcast(p, game_state: { players: players })
+      broadcast(p, game_state: {
+        phase: @game.current_phase,
+        players: players
+      })
     end
   end
   def player_state(player)

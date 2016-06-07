@@ -193,6 +193,10 @@ $(function(){
         $("#opponent_board .creatures").html(HandlebarsTemplates.cards({
           cards: opponentState.board.map(map).filter(filterNonLands)
         }));
+        if (this.gameStarted) {
+          $("#phases li").removeClass("selected");
+          $("#phases li." + state.phase).addClass("selected");
+        }
       }
     }
   );
