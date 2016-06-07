@@ -24,21 +24,6 @@ $(function(){
     }
   );
   
-  // App.View = Class.define(
-  //   function(container, template){
-  //     this.container = container;
-  //     this.template = HandlebarsTemplates[template];
-  //   },
-  //   {
-  //     setModel: function(model){
-  //       this.model = model;
-  //     },
-  //     render: function(model){
-  //       this.container.html(this.template(model));
-  //     }
-  //   }
-  // );
-  
   App.GameViewController = Class.define(function(){
       this.game = App.gameBuilder.create(this);
       this.showDialog("Waiting for another player...");
@@ -49,6 +34,10 @@ $(function(){
       this.state = new App.GameState();
       this.state.addObserver(this);
       this.gameStarted = false;
+      this.config = {
+        skipEmptyCombat: true
+      };
+      this.lastPhase
     },
     {
       update: function(value){
@@ -148,15 +137,26 @@ $(function(){
         switch (phase) {
         case "first_main":
           if (this.index == this.current_player) {
-            this.showDialog("Cast spells");
+            this.showDialog("Cast spells", ["OK"], function(){
+              App.game.action("pass");
+            });
           } else {
-            this.showDialog("Waiting for the opponent");
+            this.showDialog("Waiting for the opponent", ["OK"], function(){
+              App.game.action("pass");
+            });
           }
           if (!this.gameStarted) {
             this.gameStarted = true;
             this.bindEvents();
           }
-          break;
+          break;          
+        // case "blockers":
+        // case "damage":
+        // case "end_combat":
+        //   if (this.state.attackers.length === 0) {
+        //     App.game.action("pass");
+        //   }
+        //   break;
         default:
           
         }
@@ -170,6 +170,7 @@ $(function(){
         });
       },
       game_state: function(state){
+        this.state = state;
         var playerState = state.players[this.index];
         var opponentState = state.players[this.opponent];
         var filterLands = function(c){ return c.types.indexOf("land") >= 0; };

@@ -70,9 +70,19 @@ class GameServer
     when :mulligan
       player = @players[@value[0]]
       broadcast(player, hand: player.hand)
+    when :changed_phase
+      case @value
+      when :begin_combat
+        if @game.attackers.size == 0
+          @game.phase_manager.jump_to :second_main
+          broadcast_game_state()
+        end
+      else
+        broadcast_game_state()
+      end
     else
       broadcast_game_state()
-    end
+    end    
   end
   def action(uuid, data)
     index = @players.index {|p| p.id == uuid}
@@ -105,6 +115,12 @@ class GameServer
       end
       broadcast(p, game_state: {
         phase: @game.current_phase,
+        current_player_index: @game.current_phase,
+        die_winner: @game.die_winner,
+        priority_player: @game.priority_player,
+        attackers: @game.attackers,
+        blockers: @game.blockers,
+        winner: @game.winner, 
         players: players
       })
     end
