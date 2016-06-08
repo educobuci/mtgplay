@@ -149,14 +149,7 @@ $(function(){
             this.gameStarted = true;
             this.bindEvents();
           }
-          break;          
-        // case "blockers":
-        // case "damage":
-        // case "end_combat":
-        //   if (this.state.attackers.length === 0) {
-        //     App.game.action("pass");
-        //   }
-        //   break;
+          break;
         default:
           
         }
@@ -170,33 +163,35 @@ $(function(){
         });
       },
       game_state: function(state){
-        this.state = state;
-        var playerState = state.players[this.index];
-        var opponentState = state.players[this.opponent];
-        var filterLands = function(c){ return c.types.indexOf("land") >= 0; };
-        var filterNonLands = function(c){ return c.types.indexOf("land") < 0; };
-        var map = function(c,i){
-          c.index = i;
-          return c;
-        };
-        $("#player_me").html(HandlebarsTemplates.player(playerState));
-        $("#hand").html(HandlebarsTemplates.cards({cards: playerState.hand}));
-        $("#player_board .lands").html(HandlebarsTemplates.cards({
-          cards: playerState.board.map(map).filter(filterLands)
-        }));
-        $("#player_board .creatures").html(HandlebarsTemplates.cards({
-          cards: playerState.board.map(map).filter(filterNonLands)
-        }));
-        $("#player_opponent").html(HandlebarsTemplates.player(opponentState));
-        $("#opponent_board .lands").html(HandlebarsTemplates.cards({
-          cards: opponentState.board.map(map).filter(filterLands)
-        }));
-        $("#opponent_board .creatures").html(HandlebarsTemplates.cards({
-          cards: opponentState.board.map(map).filter(filterNonLands)
-        }));
         if (this.gameStarted) {
-          $("#phases li").removeClass("selected");
-          $("#phases li." + state.phase).addClass("selected");
+          this.state = state;
+          var playerState = state.players[this.index];
+          var opponentState = state.players[this.opponent];
+          var filterLands = function(c){ return c.types.indexOf("land") >= 0; };
+          var filterNonLands = function(c){ return c.types.indexOf("land") < 0; };
+          var map = function(c,i){
+            c.index = i;
+            return c;
+          };
+          $("#player_me").html(HandlebarsTemplates.player(playerState));
+          $("#hand").html(HandlebarsTemplates.cards({cards: playerState.hand}));
+          $("#player_board .lands").html(HandlebarsTemplates.cards({
+            cards: playerState.board.map(map).filter(filterLands)
+          }));
+          $("#player_board .creatures").html(HandlebarsTemplates.cards({
+            cards: playerState.board.map(map).filter(filterNonLands)
+          }));
+          $("#player_opponent").html(HandlebarsTemplates.player(opponentState));
+          $("#opponent_board .lands").html(HandlebarsTemplates.cards({
+            cards: opponentState.board.map(map).filter(filterLands)
+          }));
+          $("#opponent_board .creatures").html(HandlebarsTemplates.cards({
+            cards: opponentState.board.map(map).filter(filterNonLands)
+          }));
+          if (this.gameStarted) {
+            $("#phases li").removeClass("selected");
+            $("#phases li." + state.phase).addClass("selected");
+          }
         }
       }
     }
