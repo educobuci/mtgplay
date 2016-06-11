@@ -136,15 +136,6 @@ $(function(){
       changed_phase: function(phase) {
         switch (phase) {
         case "first_main":
-          if (this.index == this.current_player) {
-            this.showDialog("Cast spells", ["OK"], function(){
-              App.game.action("pass");
-            });
-          } else {
-            this.showDialog("Waiting for the opponent", ["OK"], function(){
-              App.game.action("pass");
-            });
-          }
           if (!this.gameStarted) {
             this.gameStarted = true;
             this.bindEvents();
@@ -191,6 +182,14 @@ $(function(){
           if (this.gameStarted) {
             $("#phases li").removeClass("selected");
             $("#phases li." + state.phase).addClass("selected");
+          }
+          console.log("Indexes: ", this.index, state.current_player_index);
+          if (this.index === state.priority_player) {
+            this.showDialog("Cast spells and activate abilities.", ["OK"], function(){
+              App.game.action("pass");
+            });
+          } else {
+            this.showDialog("Waiting for the opponent.");
           }
         }
       }
