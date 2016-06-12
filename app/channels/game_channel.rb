@@ -77,8 +77,9 @@ class GameServer
         @game.pass(@game.current_player_index == 0 ? 1 : 0)
       when :begin_combat
         if @game.attackers.size == 0
-          @game.phase_manager.jump_to :second_main
-          broadcast_game_state()
+          # @game.pass(@game.current_player_index == 0 ? 1 : 0)
+          # @game.phase_manager.jump_to :second_main
+          # broadcast_game_state()
         end
       when :end
         @game.pass(@game.current_player_index)

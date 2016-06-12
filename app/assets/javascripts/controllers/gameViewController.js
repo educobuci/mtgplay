@@ -143,9 +143,17 @@ $(function(){
         $("#hand").on('click', 'div.card', function(){
           App.game.action("play_card", $(this).index());
         });
-        $("#player_board").on("click", 'div.card', function(){
-          App.game.action("tap_card", $(this).data("index"));
-        });
+        $("#player_board").on("click", 'div.card', function(e){
+          var index = $(e.currentTarget).data("index");
+          console.log(index, this.state.player.board[index]);
+          if (this.state.player.board[index].types.indexOf("creature") >= 0){
+            console.log("attack", index);
+            App.game.action("attack", index);
+          } else {
+            console.log("tap", index);
+            App.game.action("tap_card", index);
+          }          
+        }.bind(this));
       },
       getStateViewModel: function(state){
         state.player = state.players[this.index];
