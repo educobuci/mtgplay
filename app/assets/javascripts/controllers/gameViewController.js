@@ -31,27 +31,17 @@ $(function(){
       this.opponentKeeped = false;
       this.mulled = false;
       this.current_player = null;
-      this.state = new App.GameState();
-      this.state.addObserver(this);
+      this.state = {};
       this.gameStarted = false;
       this.config = {
         skipEmptyCombat: true
       };
-      this.lastPhase
     },
     {
-      update: function(value){
-        if (!this.gameStarted) {
-          if (value.indexOf("player") >= 0) {
-            $("#player_me").html(HandlebarsTemplates.player(this.state.getPlayer()));
-            $("#hand").html(HandlebarsTemplates.cards({cards: this.state.getPlayer().getHand()}));
-            $("#player_board .lands").html(HandlebarsTemplates.cards({cards: this.state.getPlayer().getBoard()}));
-          }
-          if (value.indexOf("opponent") >= 0) {
-            $("#player_opponent").html(HandlebarsTemplates.player(this.state.getOpponent()));
-            $("#opponent_board .lands").html(HandlebarsTemplates.cards({cards: this.state.getOpponent().getBoard()}));
-          }
-        }
+      update: function(){
+        $("#player_me").html(HandlebarsTemplates.player(this.state.player));
+        $("#hand").html(HandlebarsTemplates.cards(this.state.player.hand));
+        $("#player_opponent").html(HandlebarsTemplates.player(this.state.opponent));
       },
       showDialog: function(text, buttons, callback){
         var template = Handlebars.compile($("#dialog-template").html());
@@ -71,11 +61,13 @@ $(function(){
       start: function(data){
         this.index = data.index;
         this.opponent = this.index == 0 ? 1 : 0;
-        var playerModel = new App.Player(data.players[this.index]);
-        var opponentModel = new App.Player(data.players[this.opponent]);
-        opponentModel.setHand(7);
-        this.state.setPlayer(playerModel);
-        this.state.setOpponent(opponentModel);
+        this.state.player = data.players[this.index];
+        this.state.opponent = data.players[this.opponent];
+        this.state.opponent.hand = 7;
+        this.state.player.hand = 7;
+        Handlebars.registerPartial('player', HandlebarsTemplates.player);
+        Handlebars.registerPartial('cards', HandlebarsTemplates.cards);
+        $("#frame").html(HandlebarsTemplates.game(this.state));
       },
       dices: function(value){
         if(value[this.index] > value[this.opponent]){
@@ -95,22 +87,24 @@ $(function(){
         this.current_player = this.start_player;
       },
       hand: function(cards) {
-        this.state.getPlayer().setHand(cards);
+        this.state.player.hand = cards;
+        this.update();
         // This is just for very first hand and start the game
         if (this.start_player == this.index && !this.mulled) {
-          this.handleMulligan(this.state.getPlayer().getHand().length - 1);
+          this.handleMulligan(this.state.player.hand.length - 1);
         }
       },
       mulligan: function(data) {
         player = data[0];
         number = Math.max(6 - data[1],0);
         if (player == this.opponent && !this.keeped) {
-          this.handleMulligan(this.state.getPlayer().getHand().length -1);
+          this.handleMulligan(this.state.player.hand.length -1);
         } else if (this.opponentKeeped) {
           this.handleMulligan(number);
         }
         if (player == this.opponent) {
-          this.state.getOpponent().setHand(number + 1);
+          this.state.opponent.hand = number + 1;
+          this.update();
         }
       },
       handleMulligan: function(number) {
@@ -129,7 +123,7 @@ $(function(){
         } else {
           this.opponentKeeped = true;
           if (!this.keeped) {
-            this.handleMulligan(this.state.getPlayer().getHand().length -1);
+            this.handleMulligan(this.state.player.hand.length -1);
           }
         }
       },
@@ -153,37 +147,29 @@ $(function(){
           App.game.action("tap_card", $(this).data("index"));
         });
       },
+      getStateViewModel: function(state){
+        state.player = state.players[this.index];
+        state.opponent = state.players[this.opponent];
+        var map = function(c,i){
+          c.index = i;
+          return c;
+        };
+        [state.player, state.opponent].forEach(function(p){
+          p.boardLands = p.board.map(map).filter(function(c){
+            return c.types.indexOf("land") >= 0;
+          });
+          p.boardNonLands = p.board.map(map).filter(function(c){
+            return c.types.indexOf("land") < 0;
+          });
+        });
+        return state;
+      },
       game_state: function(state){
         if (this.gameStarted) {
-          this.state = state;
-          var playerState = state.players[this.index];
-          var opponentState = state.players[this.opponent];
-          var filterLands = function(c){ return c.types.indexOf("land") >= 0; };
-          var filterNonLands = function(c){ return c.types.indexOf("land") < 0; };
-          var map = function(c,i){
-            c.index = i;
-            return c;
-          };
-          $("#player_me").html(HandlebarsTemplates.player(playerState));
-          $("#hand").html(HandlebarsTemplates.cards({cards: playerState.hand}));
-          $("#player_board .lands").html(HandlebarsTemplates.cards({
-            cards: playerState.board.map(map).filter(filterLands)
-          }));
-          $("#player_board .creatures").html(HandlebarsTemplates.cards({
-            cards: playerState.board.map(map).filter(filterNonLands)
-          }));
-          $("#player_opponent").html(HandlebarsTemplates.player(opponentState));
-          $("#opponent_board .lands").html(HandlebarsTemplates.cards({
-            cards: opponentState.board.map(map).filter(filterLands)
-          }));
-          $("#opponent_board .creatures").html(HandlebarsTemplates.cards({
-            cards: opponentState.board.map(map).filter(filterNonLands)
-          }));
-          if (this.gameStarted) {
-            $("#phases li").removeClass("selected");
-            $("#phases li." + state.phase).addClass("selected");
-          }
-          console.log("Indexes: ", this.index, state.current_player_index);
+          this.state = this.getStateViewModel(state);
+          $("#frame").html(HandlebarsTemplates.game(this.state));
+          this.bindEvents();
+          $("#phases li." + state.phase).addClass("selected");
           if (this.index === state.priority_player) {
             this.showDialog("Cast spells and activate abilities.", ["OK"], function(){
               App.game.action("pass");

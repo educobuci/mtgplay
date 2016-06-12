@@ -1,0 +1,52 @@
+<div id="players_bar">
+  <div class="player" id="player_opponent">
+    {{> player opponent }}
+  </div>
+  <div id="phases">
+    <ul>
+      <li class="untap">Untap</li>
+      <li class="upkeep">Upkeep</li>
+      <li class="first_main">Main</li>
+      <li class="begin_combat">Begin Combat</li>
+      <li class="attackers">Attackers</li>
+      <li class="blockers">Blockers</li>
+      <li class="damage">Damage</li>
+      <li class="end_combat">End Combat</li>
+      <li class="second_main">Main</li>
+      <li class="end">End</li>
+      <li class="cleanup">Cleanup</li>
+    </ul>
+  </div>
+  <div id="dialog"></div>
+  <div class="player" id="player_me">
+    {{> player player }}
+  </div>
+</div>
+<div id="boards">
+  <div class="wrapper">
+    <div id="opponent_board" class="board">
+      <div class="lands">
+        {{> cards opponent.boardLands }}
+      </div>
+      <div class="creatures">
+        {{> cards opponent.boardNonLands }}
+      </div>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div id="player_board" class="board">
+      <div class="creatures">
+        {{> cards player.boardNonLands }}
+      </div>
+      <div class="lands">
+        {{> cards player.boardLands }}
+      </div>
+    </div>      
+  </div>
+  <div id="hand">
+    {{> cards player.hand }}
+  </div>
+</div>
+<div id="chat_bar">
+  <button onClick="resetServer()">Reset</button>
+</div>

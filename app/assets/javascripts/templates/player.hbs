@@ -4,7 +4,11 @@
   </div>
   <ul class="cards">
     <li class="lib">{{library}}</li>
-    <li class="hand">{{hand.length}}</li>
+    {{#if hand.length}}
+      <li class="hand">{{hand.length}}</li>
+    {{else}}
+      <li class="hand">{{hand}}</li>
+    {{/if}}
     <li class="grave">{{graveyard.length}}</li>  
   </ul>
   <ul class="pool">
