@@ -3,6 +3,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <title>MTG Sim</title>
   <link rel="stylesheet" href="/assets/application.css" type="text/css" media="screen" charset="utf-8">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 </head>
 <body>
 <script type="text/x-handlebars" data-template-name="cards">
@@ -35,12 +36,12 @@
           <li class="grave">2</li>  
         </ul>
         <ul class="pool">
-          <li class="white">w</li>
-          <li class="blue">u</li>
-          <li class="black">b</li>
-          <li class="red">r</li>
-          <li class="green">g</li>
-          <li class="incolor">i</li>
+          <li class="white"><i class="ms ms-w ms-cost"></i></li>
+          <li class="blue"><i class="ms ms-u ms-cost"></i></li>
+          <li class="black"><i class="ms ms-b ms-cost"></i></li>
+          <li class="red"><i class="ms ms-r ms-cost"></i></li>
+          <li class="green"><i class="ms ms-g ms-cost"></i></li>
+          <li class="colorless"><i class="ms ms-c ms-cost"></i></li>
         </ul>
       </div>
       <div class="graveyard">
@@ -51,6 +52,7 @@
       <ul>
         <li class="untap">Untap</li>
         <li class="upkeep">Upkeep</li>
+        <li class="draw">Draw</li>
         <li class="main">Main</li>
         <li class="begin_combat">Begin Combat</li>
         <li class="declare_attackers">Declare Attackers</li>
@@ -59,6 +61,7 @@
         <li class="end_combat">End Combat</li>
         <li class="main">Main</li>
         <li class="end">End</li>
+        <li class="clenaup">Cleanup</li>
       </ul>
     </div>
     <div id="dialog">
@@ -79,12 +82,12 @@
           <li class="grave">2</li>  
         </ul>
         <ul class="pool">
-          <li class="white">w</li>
-          <li class="blue">u</li>
-          <li class="black">b</li>
-          <li class="red">r</li>
-          <li class="green">g</li>
-          <li class="incolor">i</li>
+          <li class="white"><i class="ms ms-w ms-cost"></i></li>
+          <li class="blue"><i class="ms ms-u ms-cost"></i></li>
+          <li class="black"><i class="ms ms-b ms-cost"></i></li>
+          <li class="red"><i class="ms ms-r ms-cost"></i></li>
+          <li class="green"><i class="ms ms-g ms-cost"></i></li>
+          <li class="colorless"><i class="ms ms-c ms-cost"></i></li>
         </ul>
       </div>
       <div class="graveyard">
@@ -97,39 +100,40 @@
       <div class="board">
           <div class="lands">
             <div class="card">
-              <img src="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=253680&amp;type=card">
+              <img src="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=249723&type=card">
             </div>
           </div>
           <div class="creatures">
             <div class="card">
-              <img src="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=235597&amp;type=card">
+              <img src="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=226749&type=card">
             </div>
             <div class="card">
-              <img src="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=235597&amp;type=card">
+              <img src="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=226749&type=card">
             </div>
           </div>
       </div>      
     </div>
+    <div class="red_zone"></div>
     <div class="wrapper">
       <div id="player_board" class="board">
           <div class="creatures">
             <div class="card">
-              <img src="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=235597&amp;type=card">
+              <img src="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=226749&type=card">
             </div>
             <div class="card">
-              <img src="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=235597&amp;type=card">
+              <img src="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=226749&type=card">
             </div>
           </div>
           <div class="lands">
             <div class="card">
-              <img src="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=253680&amp;type=card">
+              <img src="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=249723&type=card">
             </div>
           </div>
       </div>      
     </div>
     <div id="hand">
       <div class="card">
-        <img src="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=253680&amp;type=card">
+        <img src="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=249723&type=card">
       </div>
     </div>
   </div>

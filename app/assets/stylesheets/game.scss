@@ -147,9 +147,18 @@ ul {
   margin-left:$bar-width;
   margin-right:0;
   min-height:600px;
+  .wrapper:first-child {
+    padding-top:5px;
+  }
   .wrapper {
-    height:40%;
-    padding:5px 5px 0 5px;
+    height:37.5%;
+    padding:0px 5px 0px 5px;
+  }
+  .red_zone {
+    height:5%;
+    background-color:#400A0A;
+    border-radius:5px;
+    margin:0px 5px 0px 5px;
   }
  .board {
     height:100%;
