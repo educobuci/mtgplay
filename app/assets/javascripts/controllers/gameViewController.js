@@ -130,19 +130,28 @@ $(function(){
         }
       },
       changed_phase: function(phase) {
+        this.autoPass();
       },
       pass: function(player) {
-        // var stopConfig;
-        // if (this.autoPassPhases.indexOf(phase) < 0) {
-        //   if (player === this.opponent) {
-        //     stopConfig = this.stopPhases.player;
-        //   } else {
-        //     stopConfig = this.stopPhases.opponent;
-        //   }
-        //   if (stopConfig.indexOf(phase) < 0) {
-        //     App.game.action("pass");
-        //   }
-        // }
+        if (player == this.opponent &&
+          this.index != this.state.current_player_index) {
+          this.autoPass();
+        }        
+      },
+      autoPass: function() {
+        if (this.state.priority_player == this.index && 
+            this.autoPassPhases.indexOf(this.state.phase) < 0) {
+          var stopConfig;
+          if (this.state.current_player_index === this.index) {
+            stopConfig = this.stopPhases.player;
+          } else {
+            stopConfig = this.stopPhases.opponent;
+          }
+          if (stopConfig.indexOf(this.state.phase) < 0) {
+            console.log(stopConfig, this.state.phase)
+            App.game.action("pass");
+          }
+        }
       },
       bindEvents: function() {
         $("#hand").on('click', 'div.card', function(){
