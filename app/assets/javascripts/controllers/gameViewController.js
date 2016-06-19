@@ -33,9 +33,11 @@ $(function(){
       this.current_player = null;
       this.state = {};
       this.gameStarted = false;
-      this.config = {
-        skipEmptyCombat: true
+      this.stopPhases = {
+        player: ["first_main", "attackers", "blockers", "second_main"],
+        opponent: ["begin_combat", "attackers", "blockers", "end"],
       };
+      this.autoPassPhases = ["untap", "cleanup"];
     },
     {
       update: function(){
@@ -128,18 +130,21 @@ $(function(){
         }
       },
       changed_phase: function(phase) {
-        switch (phase) {
-        case "first_main":
-          if (!this.gameStarted) {
-            this.gameStarted = true;
-            this.bindEvents();
-          }
-          break;
-        default:
-          
-        }
       },
-      bindEvents: function(){
+      pass: function(player) {
+        // var stopConfig;
+        // if (this.autoPassPhases.indexOf(phase) < 0) {
+        //   if (player === this.opponent) {
+        //     stopConfig = this.stopPhases.player;
+        //   } else {
+        //     stopConfig = this.stopPhases.opponent;
+        //   }
+        //   if (stopConfig.indexOf(phase) < 0) {
+        //     App.game.action("pass");
+        //   }
+        // }
+      },
+      bindEvents: function() {
         $("#hand").on('click', 'div.card', function(){
           App.game.action("play_card", $(this).index());
         });
@@ -173,6 +178,10 @@ $(function(){
         return state;
       },
       game_state: function(state){
+        if (state.phase === "first_main" && !this.gameStarted) {
+          this.gameStarted = true;
+          this.bindEvents();
+        }
         if (this.gameStarted) {
           this.state = this.getStateViewModel(state);
           $("#frame").html(HandlebarsTemplates.game(this.state));

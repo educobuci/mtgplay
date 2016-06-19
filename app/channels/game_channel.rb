@@ -58,38 +58,27 @@ class GameServer
   def update(state, *args)
     @state = state
     @value = args.size == 1 ? args[0] : args
-    @players.each do |p|
-      broadcast(p, @state => @value)
-    end
     case @state
     when :start_player
+      @players.each do |p|
+        broadcast(p, @state => @value)
+      end
       @game.draw_hands
       @players.each do |p|
         broadcast(p, hand: p.hand)
       end
     when :mulligan
+      @players.each do |p|
+        broadcast(p, @state => @value)
+      end
       player = @players[@value[0]]
       broadcast(player, hand: player.hand)
-    when :changed_phase
-      case @value
-      when :upkeep
-        @game.pass(@game.current_player_index)
-        @game.pass(@game.current_player_index == 0 ? 1 : 0)
-      when :begin_combat
-        if @game.attackers.size == 0
-          # @game.pass(@game.current_player_index == 0 ? 1 : 0)
-          # @game.phase_manager.jump_to :second_main
-          # broadcast_game_state()
-        end
-      when :end
-        @game.pass(@game.current_player_index)
-        @game.pass(@game.current_player_index == 0 ? 1 : 0)
-      else
-        broadcast_game_state()
-      end
     else
       broadcast_game_state()
-    end    
+      @players.each do |p|
+        broadcast(p, @state => @value)
+      end
+    end
   end
   def action(uuid, data)
     index = @players.index {|p| p.id == uuid}
