@@ -203,6 +203,11 @@ $(function(){
           } else {
             this.showDialog("Waiting for the opponent.");
           }
+          if (this.state.winner === this.index) {
+            alert("YOU WIN!");
+          } else if (this.state.winner === this.opponent) {
+            alert("YOU LOSE!");
+          }
         }
       }
     }
