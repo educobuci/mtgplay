@@ -172,14 +172,28 @@ $(function(){
         });
         $("#player_board").on("click", 'div.card', function(e){
           var index = $(e.currentTarget).data("index");
-          console.log(index, this.state.player.board[index]);
-          if (this.state.player.board[index].types.indexOf("creature") >= 0){
-            console.log("attack", index);
-            App.game.action("attack", index);
+          var card = this.state.player.board[index];
+          if (card.types.indexOf("creature") >= 0){
+            if (this.state.phase === "attackers") {
+              App.game.action("attack", index);
+            } else if(this.state.phase === "blockers") {
+              console.log("Blocking index", index);
+              this.blockingCard = index;
+            }
           } else {
-            console.log("tap", index);
             App.game.action("tap_card", index);
-          }          
+          }
+        }.bind(this));
+        $("#opponent_board").on("click", 'div.card', function(e){
+          var index = $(e.currentTarget).data("index");
+          console.log("Blocked index", index);
+          var card = this.state.opponent.board[index];
+          if (card.types.indexOf("creature") >= 0){
+            if (this.state.phase === "blockers" && this.blockingCard) {
+              App.game.action("block", [index, this.blockingCard]);
+              this.blockingCard = null;
+            }
+          }
         }.bind(this));
       },
       getStateViewModel: function(state){
