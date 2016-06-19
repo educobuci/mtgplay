@@ -38,6 +38,7 @@ $(function(){
         opponent: ["begin_combat", "attackers", "blockers", "end"],
       };
       this.autoPassPhases = ["untap", "cleanup"];
+      this.autoPassTurn = false;
     },
     {
       update: function(){
@@ -70,6 +71,16 @@ $(function(){
         Handlebars.registerPartial('player', HandlebarsTemplates.player);
         Handlebars.registerPartial('cards', HandlebarsTemplates.cards);
         $("#frame").html(HandlebarsTemplates.game(this.state));
+        $(document).keypress(function(event){
+          switch (event.which) {
+          case 50: // 2
+            App.game.action("pass");
+            break;
+          case 54: // 6
+            this.autoPassTurn = true;
+            App.game.action("pass");
+          }
+        }.bind(this));
       },
       dices: function(value){
         if(value[this.index] > value[this.opponent]){
@@ -130,11 +141,14 @@ $(function(){
         }
       },
       changed_phase: function(phase) {
+        if (phase === "upkeep") {
+          this.autoPassTurn = false;
+        }
         this.autoPass();
       },
       pass: function(player) {
         if (player == this.opponent &&
-          this.index != this.state.current_player_index) {
+          (this.index != this.state.current_player_index || this.state.phase === "blockers") ) {
           this.autoPass();
         }        
       },
@@ -147,8 +161,7 @@ $(function(){
           } else {
             stopConfig = this.stopPhases.opponent;
           }
-          if (stopConfig.indexOf(this.state.phase) < 0) {
-            console.log(stopConfig, this.state.phase)
+          if (stopConfig.indexOf(this.state.phase) < 0 || this.autoPassTurn) {
             App.game.action("pass");
           }
         }
