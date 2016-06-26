@@ -145,8 +145,8 @@ ul {
   }
   .wrapper {
     padding:0px 5px 0px 5px;
-    height:38vh;
-    .creatures, .lands {
+    height:40vh;
+    .creatures, .lands, .blockers {
       height:50%;
       padding:5px;
       text-align:center;
@@ -182,9 +182,12 @@ ul {
     .tapped {
       transform-origin:100% 100%;
       transform:rotate(90deg) translateY(72.2%);
+      &.attacking {
+        transform: rotate(90deg) translate(-45%, 72.2%);
+      }
     }
     .attacking {
-      top:-50px;
+      transform: translateY(-4%);
     }
   }
   #hand {
@@ -194,6 +197,21 @@ ul {
     border: solid 1px #555;
     border-radius: 5px;
     margin: 5px;
+  }
+}
+
+//*****************************************************
+// Blocking
+//*****************************************************
+#boards.blocking{
+  .wrapper:first-child {
+    height:48vh;
+    .creatures, .lands, .blockers {
+      height:33%;
+    }
+  }
+  .wrapper {
+    height:32vh;
   }
 }
 
