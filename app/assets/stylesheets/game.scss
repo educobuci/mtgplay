@@ -144,7 +144,7 @@ ul {
     }
   }
   .wrapper {
-    padding:0px 5px 0px 5px;
+    padding:2.5px 5px 0px 5px;
     height:40vh;
     .creatures, .lands, .blockers {
       height:50%;
@@ -154,6 +154,7 @@ ul {
   }
   .wrapper:first-child {
     padding-top:5px;
+    padding-bottom:2.5px;
     margin-top:0px;
   }
   .red_zone {
@@ -183,11 +184,8 @@ ul {
       transform-origin:100% 100%;
       transform:rotate(90deg) translateY(72.2%);
       &.attacking {
-        transform: rotate(90deg) translate(-45%, 72.2%);
+        transform: rotate(90deg) translate(-38%, 72.2%);
       }
-    }
-    .attacking {
-      transform: translateY(-4%);
     }
   }
   #hand {
