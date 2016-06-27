@@ -208,6 +208,12 @@ $(function(){
             return c.types.indexOf("land") >= 0;
           });
           p.boardNonLands = p.board.map(map).filter(function(c){
+            var findByGameId = function(a){
+              return a.game_id === c.game_id;
+            };
+            if (state.attackers.find(findByGameId)) {
+              c.attacking = true;
+            }
             return c.types.indexOf("land") < 0;
           });
         });
