@@ -151,6 +151,9 @@ ul {
       padding:5px;
       text-align:center;
     }
+    .blockers {
+      display:none;
+    }
   }
   .wrapper:first-child {
     padding-top:5px;
@@ -201,15 +204,16 @@ ul {
 //*****************************************************
 // Blocking
 //*****************************************************
-#boards.blocking{
-  .wrapper:first-child {
+#boards.blocking {
+  .wrapper {
+    height:32vh;
+  }
+  .wrapper.blocking {
     height:48vh;
     .creatures, .lands, .blockers {
       height:33%;
+      display:block;
     }
-  }
-  .wrapper {
-    height:32vh;
   }
 }
 

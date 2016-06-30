@@ -48,12 +48,31 @@ class GameServer
   end
   def start
     @game.roll_dices
-    # @game.start_player @game.die_winner, @game.die_winner
-    # @game.draw_hands
-    # @game.keep @game.die_winner
-    # die_loser = @game.die_winner == 0 ? 1 : 0
-    # @game.keep die_loser
-    # @game.start
+    #load_test
+  end
+  def load_test
+    @game.start_player @game.die_winner, @game.die_winner
+    @game.keep @game.die_winner
+    die_loser = @game.die_winner == 0 ? 1 : 0
+    @game.keep die_loser
+    @game.start
+    
+    @player = @game.die_winner
+    @opponent = die_loser
+    
+    prepare_board_to_attack [Cards::DelverofSecrets.new, Cards::MotherofRunes.new],
+      [Cards::SnapcasterMage.new, Cards::GeistofSaintTraft.new, Cards::RestorationAngel.new]
+  
+    @game.phase_manager.jump_to :attackers
+    
+    # Declare Delver as attacker
+    @game.attack(@player, 0)
+    @game.pass(@player)
+    @game.pass(@game.opponent_index)
+    
+    # Declare Delver as blocker
+    @game.block(@opponent, 0, 0)
+    @game.block(@opponent, 0, 1)
   end
   def update(state, *args)
     @state = state
@@ -128,6 +147,23 @@ class GameServer
       board: player.board,
       graveyard: player.graveyard
     }
+  end
+  
+  def prepare_board_to_attack(attackers, blockers)
+    attackers.each do |attacker|
+      attacker.damage = 0
+      attacker.dealt_damage = 0
+    end
+    @game.players(@player).board += attackers
+    
+    blockers.each do |blocker|
+      blocker.damage = 0
+      blocker.dealt_damage = 0
+    end
+    @game.players(@opponent).board += blockers
+    
+    @attackers = attackers
+    @blockers = blockers
   end
   
   # Class methods

@@ -214,7 +214,19 @@ $(function(){
             if (state.attackers.find(findByGameId)) {
               c.attacking = true;
             }
+            if (p != state.players[state.current_player_index]) {
+              if (Object.keys(state.blockers).indexOf(c.index.toString()) >= 0) {
+                return false;
+              }
+            }
             return c.types.indexOf("land") < 0;
+          });
+          p.blockers = p.board.map(map).filter(function(c){
+            if (p != state.players[state.current_player_index]) {
+              if (Object.keys(state.blockers).indexOf(c.index.toString()) >= 0) {
+                return true;
+              }
+            }
           });
         });
         return state;
@@ -227,6 +239,15 @@ $(function(){
         if (this.gameStarted) {
           this.state = this.getStateViewModel(state);
           $("#frame").html(HandlebarsTemplates.game(this.state));
+          if ((this.state.phase === "blockers" || this.state.phase === "damage")
+              && Object.keys(this.state.blockers).length > 0) {
+            var board = this.state.current_player_index == this.index ? "#opponent_board" : "#player_board";
+            $("#boards").addClass("blocking");
+            $(board).parent().addClass("blocking");
+            var attacker = this.state.attackers[0];            
+          } else {
+            $("#boards").removeClass("blocking");
+          }
           this.bindEvents();
           $("#phases li." + state.phase).addClass("selected");
           if (this.index === state.priority_player) {

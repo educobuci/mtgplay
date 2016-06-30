@@ -11,7 +11,6 @@ App.gameBuilder.create = function(delegate) {
       this.pool = null;
     },
     received: function(message) {
-      console.log("message index:" + message.index);
       this.pool.push(message);
       this.checkPool();
     },

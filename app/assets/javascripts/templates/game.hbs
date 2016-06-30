@@ -32,10 +32,16 @@
       <div class="creatures">
         {{> cards opponent.boardNonLands }}
       </div>
+      <div class="blockers">
+        {{> cards opponent.blockers }}
+      </div>
     </div>
   </div>
   <div class="wrapper">
     <div id="player_board" class="board">
+      <div class="blockers">
+        {{> cards player.blockers }}
+      </div>
       <div class="creatures">
         {{> cards player.boardNonLands }}
       </div>
