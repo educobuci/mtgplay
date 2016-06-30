@@ -48,7 +48,7 @@ class GameServer
   end
   def start
     @game.roll_dices
-    #load_test
+    load_test
   end
   def load_test
     @game.start_player @game.die_winner, @game.die_winner

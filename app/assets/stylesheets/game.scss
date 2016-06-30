@@ -191,6 +191,13 @@ ul {
       }
     }
   }
+  #opponent_board {
+    .tapped {
+      &.attacking {
+        transform: rotate(90deg) translate(0, 72.2%);
+      }
+    }
+  }
   #hand {
     padding: 6px 5px;
     height: calc(20vh - 15px);
