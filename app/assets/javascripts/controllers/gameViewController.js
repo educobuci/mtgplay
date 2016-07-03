@@ -257,10 +257,10 @@ $(function(){
               var attacker = this.state.blockers[blockerIndex];
               var $blocker = $(blockBoard).find(".card[data-index='" + blockerIndex + "']");
               var $attacker = $(attackBoard).find(".card[data-id='" + attacker.game_id + "']");
-              console.log("Positioning ", $blocker);
-              console.log(blockerIndex, $blocker, $attacker, $blocker.position().left, $attacker.position().left);
-              $blocker.css({left: $attacker.position().left - $blocker.position().left + offset});
-              offset += 15;
+              if ($blocker.length > 0 && $attacker.length > 0) {
+                $blocker.css({left: $attacker.position().left - $blocker.position().left + offset});
+                offset += 15;
+              }
             }
           } else {
             $("#boards").removeClass("blocking");
