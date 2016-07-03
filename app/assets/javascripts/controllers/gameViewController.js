@@ -241,13 +241,30 @@ $(function(){
           $("#frame").html(HandlebarsTemplates.game(this.state));
           if ((this.state.phase === "blockers" || this.state.phase === "damage")
               && Object.keys(this.state.blockers).length > 0) {
-            var board = this.state.current_player_index == this.index ? "#opponent_board" : "#player_board";
+            var attackBoard,blockBoard;
+            if (this.state.current_player_index == this.index) {
+              attackBoard = "#player_board";
+              blockBoard = "#opponent_board";
+            } else {
+              attackBoard = "#opponent_board";
+              blockBoard = "#player_board";
+            }
             $("#boards").addClass("blocking");
-            $(board).parent().addClass("blocking");
-            var attacker = this.state.attackers[0];            
+            $(blockBoard).parent().addClass("blocking");
+            var offset = 0;
+            window.stateX = this.state;
+            for(blockerIndex in this.state.blockers) {
+              var attacker = this.state.blockers[blockerIndex];
+              var $blocker = $(blockBoard).find(".card[data-index='" + blockerIndex + "']");
+              var $attacker = $(attackBoard).find(".card[data-id='" + attacker.game_id + "']");
+              console.log("Positioning ", $blocker);
+              console.log(blockerIndex, $blocker, $attacker, $blocker.position().left, $attacker.position().left);
+              $blocker.css({left: $attacker.position().left - $blocker.position().left + offset});
+              offset += 15;
+            }
           } else {
             $("#boards").removeClass("blocking");
-          }
+          }          
           this.bindEvents();
           $("#phases li." + state.phase).addClass("selected");
           if (this.index === state.priority_player) {

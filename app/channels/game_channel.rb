@@ -48,7 +48,7 @@ class GameServer
   end
   def start
     @game.roll_dices
-    load_test
+    #load_test
   end
   def load_test
     @game.start_player @game.die_winner, @game.die_winner
@@ -60,7 +60,7 @@ class GameServer
     @player = @game.die_winner
     @opponent = die_loser
     
-    prepare_board_to_attack [Cards::DelverofSecrets.new, Cards::MotherofRunes.new],
+    prepare_board_to_attack [Cards::DelverofSecrets.new, Cards::MotherofRunes.new, Cards::MotherofRunes.new],
       [Cards::SnapcasterMage.new, Cards::GeistofSaintTraft.new, Cards::RestorationAngel.new]
   
     @game.phase_manager.jump_to :attackers

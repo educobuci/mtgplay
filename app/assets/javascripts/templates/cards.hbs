@@ -1,5 +1,5 @@
 {{#each this}}
-<div data-index="{{index}}" data-name="{{name}}" class="card {{#if tapped}}tapped{{/if}} {{#if attacking}}attacking{{/if}}">
+<div data-index="{{index}}" data-name="{{name}}" data-id="{{game_id}}" class="card {{#if tapped}}tapped{{/if}} {{#if attacking}}attacking{{/if}}">
   <img src="{{image}}">
 </div>
 {{/each}}
